@@ -10,8 +10,28 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     @apply bg-gray-900 text-white;
+  }
+
+  /* Smooth sliding animations */
+  .slide-in {
+    animation: slideIn 0.5s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
@@ -38,6 +58,15 @@
   .input-primary:focus {
     box-shadow: 0 0 15px var(--glow-color);
   }
+
+  /* Form validation styles */
+  .input-error {
+    @apply border-red-500 focus:ring-red-200;
+  }
+
+  .error-message {
+    @apply text-red-500 text-sm mt-1;
+  }
 }
 
 @layer utilities {
@@ -63,5 +92,34 @@
 
   .hover-glow:hover {
     box-shadow: 0 0 25px var(--glow-color);
+  }
+
+  /* Animation utilities */
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }

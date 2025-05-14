@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, Lock, User } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { supabase } from '../../supabase/client';
+import { supabase } from '../../lib/supabase';
+import { cn } from '../../utils/cn';
 
 const SignInForm: React.FC = () => {
   const navigate = useNavigate();
@@ -14,67 +15,48 @@ const SignInForm: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Step 1: Look up the user's email in the 'users' table using the provided username.
-      // This requires your 'users' table to have a 'username' and 'email' column,
-      // and RLS should allow this query (e.g., select on username).
+      // Step 1: Look up the user's email using the username
       const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('email, id')
-      .eq('username', username)
-      .maybeSingle(); // ici
-    
-    if (userError || !userData) {
-      throw new Error('Incorrect username or password');
-    }
-    
-      
+        .from('users')
+        .select('email')
+        .eq('username', username)
+        .single();
 
-      // Get the email from the found user data
-      const email = userData.email;
+      if (userError || !userData) {
+        throw new Error('Invalid username or password');
+      }
 
-      // Step 2: Authenticate the user using the retrieved email and the provided password.
-      // Supabase's built-in auth works with email and password.
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,    // Use the email found in Step 1
-        password, // Use the password entered by the user
+      // Step 2: Sign in with email/password
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: userData.email,
+        password,
       });
 
-      // If authentication fails with email/password
-      if (error) {
-          // Again, for security, provide a generic error message
-          throw new Error('Incorrect username or password');
+      if (signInError) {
+        throw new Error('Invalid username or password');
       }
 
-      // Check if user object is returned successfully
-      const user = data.user;
-      if (!user) {
-          // Should not happen if there's no error, but good practice
-          throw new Error('Sign in failed: User not found');
-      }
-
-      // Authentication successful
       toast.success('Welcome back!');
-      navigate('/dashboard'); // Redirect to dashboard or desired page
-
+      navigate('/dashboard');
     } catch (err: any) {
-      // Catch any errors from either the lookup or the sign-in process
-      toast.error(err.message || 'Sign in failed');
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-gray-800/80 rounded-2xl shadow-glow p-8 border border-primary-main/20">
         <div className="text-center">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-primary-main to-primary-light bg-clip-text text-transparent mb-2">
-            Sign in
+            Sign in to your account
           </h2>
-          <p className="text-gray-400 mb-6">Access your account</p>
+          <p className="text-gray-400">Welcome back!</p>
         </div>
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-1">
                 Username
@@ -88,11 +70,16 @@ const SignInForm: React.FC = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="input-primary pl-10"
-                  placeholder="Username"
+                  className={cn(
+                    "input-primary pl-10",
+                    "focus:ring-primary-main focus:border-primary-main",
+                    "placeholder-gray-400"
+                  )}
+                  placeholder="Enter your username"
                 />
               </div>
             </div>
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
                 Password
@@ -103,31 +90,51 @@ const SignInForm: React.FC = () => {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input-primary pl-10"
-                  placeholder="Password"
+                  className={cn(
+                    "input-primary pl-10",
+                    "focus:ring-primary-main focus:border-primary-main",
+                    "placeholder-gray-400"
+                  )}
+                  placeholder="Enter your password"
                 />
               </div>
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center items-center gap-2 bg-primary-main text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-primary-light transition-colors duration-200"
-          >
-            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Sign in'}
-          </button>
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className={cn(
+                "btn-primary w-full flex justify-center items-center gap-2",
+                loading && "opacity-75 cursor-not-allowed"
+              )}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign in'
+              )}
+            </button>
+          </div>
         </form>
-        <div className="text-center mt-6">
-          <button
-            onClick={() => navigate('/signup')}
-            className="text-sm text-white bg-primary-main/20 px-4 py-2 rounded-lg hover:bg-primary-main/40 transition-colors"
-          >
-            Don't have an account? Sign up
-          </button>
+
+        <div className="text-center">
+          <p className="text-gray-400">
+            Don't have an account?{' '}
+            <button
+              onClick={() => navigate('/signup')}
+              className="text-primary-main hover:text-primary-light transition-colors"
+            >
+              Sign up
+            </button>
+          </p>
         </div>
       </div>
     </div>
