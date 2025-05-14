@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Github, Twitter, Discord } from 'lucide-react';
+import { Github, Twitter, Disc as Discord } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
