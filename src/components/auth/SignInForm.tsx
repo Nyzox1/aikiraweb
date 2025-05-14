@@ -16,15 +16,16 @@ const SignInForm: React.FC = () => {
     setLoading(true);
     try {
       // Step 1: Look up the user's email using the username
-      const { data: userData, error: userError } = await supabase
+      const { data: users, error: userError } = await supabase
         .from('users')
         .select('email')
-        .eq('username', username)
-        .single();
+        .eq('username', username);
 
-      if (userError || !userData) {
+      if (userError || !users || users.length === 0) {
         throw new Error('Invalid username or password');
       }
+
+      const userData = users[0];
 
       // Step 2: Sign in with email/password
       const { error: signInError } = await supabase.auth.signInWithPassword({
