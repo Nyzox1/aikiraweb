@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-main: #8B5CF6;
+  --primary-dark: #7C3AED;
+  --primary-light: #A78BFA;
+  --glow-color: rgba(139, 92, 246, 0.3);
+}
+
+@layer base {
+  body {
+    @apply bg-gray-900 text-white;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-main text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg;
+  }
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
+    box-shadow: 0 0 20px var(--glow-color);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    @apply bg-gray-800 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 hover:bg-gray-700;
+  }
+  .btn-secondary:hover {
+    box-shadow: 0 0 15px var(--glow-color);
+  }
+
+  .input-primary {
+    @apply block w-full px-4 py-2 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-main focus:border-transparent transition-all duration-300;
+  }
+  .input-primary:focus {
+    box-shadow: 0 0 15px var(--glow-color);
+  }
+}
+
+@layer utilities {
+  .text-primary-main {
+    color: var(--primary-main);
+  }
+
+  .bg-primary-main {
+    background-color: var(--primary-main);
+  }
+
+  .border-primary-main {
+    border-color: var(--primary-main);
+  }
+
+  .ring-primary-main {
+    --tw-ring-color: var(--primary-main);
+  }
+
+  .glow {
+    box-shadow: 0 0 20px var(--glow-color);
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 25px var(--glow-color);
+  }
+}
