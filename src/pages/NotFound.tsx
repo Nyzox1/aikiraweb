@@ -1,23 +1,45 @@
-import React from 'react';
-import { AlertTriangle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 
-const NotFound: React.FC = () => {
+export default function NotFoundPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900">
-      <div className="bg-gray-800/80 rounded-2xl shadow-glow p-8 border border-primary-main/20 flex flex-col items-center">
-        <AlertTriangle className="h-16 w-16 text-primary-main mb-4" />
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-main to-primary-light bg-clip-text text-transparent mb-2">
-          Oops! Page not found
-        </h1>
-        <p className="text-gray-400 mb-6 text-center max-w-xs">
-          Sorry, the page you are looking for does not exist or has been moved.<br />
-          Go back to the homepage to continue exploring Nebula Nexus.
-        </p>
-        <Link to="/" className="btn-primary px-6 py-2">Back to homepage</Link>
+    <div className="min-h-screen bg-gray-50 px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8 dark:bg-gray-900">
+      <div className="mx-auto max-w-max">
+        <motion.div
+          className="sm:flex"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.p 
+            className="text-4xl font-bold tracking-tight text-primary-600 sm:text-5xl"
+            initial={{ rotate: -10, scale: 0.8 }}
+            animate={{ rotate: 0, scale: 1 }}
+            transition={{ duration: 0.5, type: 'spring' }}
+          >
+            404
+          </motion.p>
+          <div className="sm:ml-6">
+            <div className="sm:border-l sm:border-gray-200 sm:pl-6 dark:sm:border-gray-700">
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
+                Page not found
+              </h1>
+              <p className="mt-3 text-base text-gray-500 dark:text-gray-400">
+                We couldn't find the page you're looking for.
+              </p>
+            </div>
+            <div className="mt-10 flex space-x-3 sm:border-l sm:border-transparent sm:pl-6">
+              <Link
+                to="/"
+                className="btn-primary"
+              >
+                Go back home
+              </Link>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
-  );
-};
-
-export default NotFound; 
+  )
+}
